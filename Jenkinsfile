@@ -50,7 +50,7 @@ pipeline {
                 env.IMAGE_TAG  = "${IMAGE_REPO}:${env.BUILD_NUMBER}"
                 env.IMAGE_LATEST = "${IMAGE_REPO}:latest"
 
-                sh "docker build --platform=linux/amd64 -t ${env.IMAGE_TAG} ."
+                sh "docker build -t ${env.IMAGE_TAG} ."
                 sh "docker tag ${env.IMAGE_TAG} ${env.IMAGE_LATEST}"
                 }
             }
