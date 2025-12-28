@@ -80,6 +80,10 @@ pipeline {
         failure {
             echo '❌ Pipeline failed!'
         }
+	always {
+            sh 'docker image prune -f || true'
+            echo "Image pruned"
+        }
     }
 
 }
