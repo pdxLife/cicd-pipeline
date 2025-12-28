@@ -46,6 +46,7 @@ pipeline {
         
         stage('Docker image - Build') {
             steps {
+		echo 'Starting to build docker image'
                 script {
                 env.IMAGE_TAG  = "${IMAGE_REPO}:${env.BUILD_NUMBER}"
                 env.IMAGE_LATEST = "${IMAGE_REPO}:latest"
@@ -58,9 +59,9 @@ pipeline {
 
         stage('Docker image - Push') {
             steps {
-                echo 'Starting to build docker image'
+                echo 'Starting to push docker image'
                 withCredentials([usernamePassword(
-                    credentialsId: env.REGISTRY_CREDENTIALS_ID,
+                    credentialsId: params.REGISTRY_CREDENTIALS_ID,
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_TOKEN'
                 )]) {
