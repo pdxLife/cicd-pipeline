@@ -8,6 +8,16 @@ pipeline {
         // githubPush()
     }
 
+    parameters {
+        string(name: 'REGISTRY_HOST', defaultValue: 'docker.io', description: 'Registry hostname (blank = Docker Hub)')
+        string(name: 'DOCKER_IMAGE_REPO', defaultValue: 'bekzhanov/cicd-pipeline', description: 'Repository and name')
+        string(name: 'REGISTRY_CREDENTIALS_ID', defaultValue: 'docker_registry_creds', description: 'Jenkins creds ID (username/password)')
+    }
+
+    environment {
+        DOCKER_HUB_HOST = 'docker.io'
+    }
+
     stages {
         stage('GIt Checkout') {
             steps {
@@ -42,15 +52,26 @@ pipeline {
         stage('Docker image build') {
             steps {
                 echo 'Starting to build docker image'
+		script {
+                def host = (params.REGISTRY_HOST ?: '').trim()
+                def repo = params.DOCKER_IMAGE_REPO.trim()
 
-                script {
-                    def customImage = docker.build("my-image:${env.BUILD_ID}")
-                    customImage.push()
+                // Fully qualified image name:
+                // - Docker Hub: repo only, like "youruser/app"
+                // - Other registries: "host/repo"
+                def imageBase = host ? "${host}/${repo}" : repo
+
+                env.IMAGE_BASE = imageBase
+                env.IMAGE_TAG  = "${imageBase}:${env.BUILD_NUMBER}"
+                env.IMAGE_LATEST = "${imageBase}:latest"
+
+                sh "docker build -t ${env.IMAGE_TAG} ."
+                sh "docker tag ${env.IMAGE_TAG} ${env.IMAGE_LATEST}"
                 }
             }
         }
 
-    }
+    }    
     
     post {
         success {
