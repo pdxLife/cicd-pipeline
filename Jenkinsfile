@@ -70,9 +70,9 @@ pipeline {
                         docker push "$IMAGE_TAG"
                         docker push "$IMAGE_LATEST"
                     '''
-                    }
-        }
-
+                 }
+       	     }
+   	 }
     }
     
     post {
@@ -88,5 +88,4 @@ pipeline {
             echo "Image pruned"
         }
     }
-
 }
